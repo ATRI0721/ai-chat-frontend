@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.button-like {
+    @apply cursor-pointer rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700;
+}
+
+.active-bg {
+    @apply bg-blue-200 dark:bg-blue-700;
+}
