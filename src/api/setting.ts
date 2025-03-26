@@ -1,4 +1,3 @@
-// const BaseURL = "https://w4x4stmn-8000.asse.devtunnels.ms/api/v1";
 const BaseURL = "http://localhost:8000/api/v1";
 
 const api = {
