@@ -15,7 +15,7 @@ export const ChatPage = () => {
     <div className="h-screen flex">
       <Sidebar />
       <div className="flex-1 flex">
-        {currentConversationId ? (
+        {currentConversationId.trim()!== "" ? (
           <ChatArea />
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center">

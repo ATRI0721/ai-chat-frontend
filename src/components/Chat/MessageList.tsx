@@ -1,9 +1,9 @@
 import { useChatStore } from "../../store/chatStore";
 import { Message } from "../../types";
+import functionalToast from "../Commend/Toast";
 import { MarkdownRenderer } from "./MarkdownRender";
 
-function Icons({ onCopy, onRegenerate, onLike, onDislike }) {
-
+function Icons({ onCopy, onRegenerate, onLike, onDislike } : {onCopy: () => void, onRegenerate: () => void, onLike: () => void, onDislike: () => void}) {
   const iconStyle = "p-1 rounded-lg hover:bg-gray-200 cursor-pointer tooltip";
   return (
     <div className="flex items-center mt-2">
@@ -24,10 +24,10 @@ function Icons({ onCopy, onRegenerate, onLike, onDislike }) {
       >
         <img src="/cycle.svg" className="w-4 h-4" draggable="false"></img>
       </div>
-      <div className={iconStyle} data-tip="喜欢">
+      <div className={iconStyle} data-tip="喜欢" onClick={onLike} draggable="false">
         <img src="/like.svg" className="w-5 h-5" draggable="false"></img>
       </div>
-      <div className={iconStyle} data-tip="不喜欢">
+      <div className={iconStyle} data-tip="不喜欢" onClick={onDislike} draggable="false">
         <img src="/unlike.svg" className="w-5 h-5" draggable="false"></img>
       </div>
     </div>
@@ -48,7 +48,7 @@ export const MessageList = ({ messages, isloading }: {messages: Message[], isloa
             </div>
           ) : (
             <div className="flex">
-              <div className="w-8 h-8 rounded-full border-2 mr-2">
+              <div className="w-8 h-8 rounded-full border-1 border-gray-200 mr-2 p-0.5">
                 <img src="/logo.svg"></img>
               </div>
               <div className="w-full">
@@ -56,7 +56,10 @@ export const MessageList = ({ messages, isloading }: {messages: Message[], isloa
                 {(isloading && index === messages.length - 1) ? null : (
                   <Icons
                     onCopy={() =>
-                      navigator.clipboard.writeText(message.content)
+                      {
+                        navigator.clipboard.writeText(message.content);
+                        functionalToast("复制成功", "SUCCESS");
+                      }
                     }
                     onRegenerate={() => regenerateMessage(message.id)}
                     onLike={() => {}}

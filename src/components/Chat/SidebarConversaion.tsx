@@ -2,6 +2,14 @@ import { useState } from "react";
 import { Dropdown } from "../Dropdown";
 import ClickOutsideWrapper from "../ClickOutsideWrapper";
 
+type Props = {
+  title: string;
+  isSelected: boolean;
+  onSelectConversation: () => void;
+  onDeleteConversation: () => void;
+  onRenameConversation: (newTitle: string) => void;
+};
+
 const commonHoverStyle = {
   padding: "0.5rem",
   width: "fit-content",
@@ -18,7 +26,7 @@ export const SidebarConversaion = ({
   onSelectConversation,
   onDeleteConversation,
   onRenameConversation,
-}) => {
+}: Props) => {
     const [isRenaming, setIsRenaming] = useState(false);
     const [tmpTitle, setTmpTitle] = useState<string>(title);
     function handleRenameTitle(){
@@ -48,8 +56,10 @@ export const SidebarConversaion = ({
       ) : (
         <div
           className={
-            "button-like p-2 flex items-center justify-between group " +
-            (isSelected ? "bg-info/30 hover:bg-info/30" : "hover:bg-info/10")
+            "p-2 flex items-center justify-between group rounded-box cursor-pointer " +
+            (isSelected
+              ? "bg-[var(--conversations-bg)]"
+              : "hover:bg-[var(--conversations-bg)]/30")
           }
           onClick={onSelectConversation}
         >
@@ -65,7 +75,10 @@ export const SidebarConversaion = ({
                 key="rename"
                 className="hover:bg-gray-100"
                 style={commonHoverStyle}
-                onClick={() => setIsRenaming(true)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsRenaming(true);
+                }}
               >
                 <img src="/pen.svg" className="w-6 h-6" draggable="false"></img>
                 <div className="w-14">重命名</div>
@@ -74,7 +87,10 @@ export const SidebarConversaion = ({
                 key="delete"
                 className="hover:bg-red-100"
                 style={commonHoverStyle}
-                onClick={onDeleteConversation}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDeleteConversation();
+                }}
               >
                 <img
                   src="/delete.svg"

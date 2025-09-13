@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { getTheme, setTheme } from "../../utils";
 import { useAuthStore } from "../../store/authStore";
 import { useChatStore } from "../../store/chatStore";
 
-function SettingItem({ children, text, bt=true }){
-  const t = "flex items-center justify-between w-full h-14 ";
+function SettingItem({ children, text, bt=true }: { children: JSX.Element, text: string, bt?: boolean }){
     return (
-        <div className={`${t} ${bt && "border-t"}`}>
+        <div className="flex items-center justify-between w-full h-14"
+        style={bt ? {borderTop: "1px solid #eee"}: {}}>
           <div className="leading-8">{text}</div>
           {children}
         </div>
@@ -24,16 +24,22 @@ const GeneralSetting = () => {
     <SettingItem text="主题" bt={false}>
       <select
         data-theme-select
-        className="select select-primary select-sm"
+        className="select select-primary w-fit cursor-pointer rounded-md"
         onChange={(e) => {
           setTheme(e.target.value);
           setSelectedTheme(e.target.value);
         }}
         value={theme}
       >
-        <option value="system">跟随系统</option>
-        <option value="light">浅色</option>
-        <option value="dark">深色</option>
+        <option value="system">
+          跟随系统
+        </option>
+        <option value="light">
+          浅色
+        </option>
+        <option value="dark">
+          深色
+        </option>
       </select>
     </SettingItem>
   );
@@ -59,7 +65,7 @@ const AccountSetting = () => {
 
 
 
-const SettingDialog = ({ closeFunc }) => {
+const SettingDialog = ({ closeFunc }: { closeFunc: () => void }) => {
     const [form,setForm] = useState<0|1>(0);
     const selecterStyle = "rounded-lg p-0.5 text-center cursor-pointer"
     useEffect(() => {
@@ -75,7 +81,7 @@ const SettingDialog = ({ closeFunc }) => {
     })
   return (
     <div
-      className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+      className="fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50"
       // data-theme="dark"
       onClick={closeFunc}
     >
@@ -113,7 +119,7 @@ const SettingDialog = ({ closeFunc }) => {
         {form === 0 ? (
           <GeneralSetting />
         ) : form === 1 ? (
-          <AccountSetting email="123456@qq.com" />
+          <AccountSetting />
         ) : null}
       </div>
     </div>

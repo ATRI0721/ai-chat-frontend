@@ -49,7 +49,7 @@ export const ChatArea = () => {
             </div>
             <div className="sticky bottom-0 mt-auto w-full flex items-center z-10 flex-col bg-base-100">
               <div className="relative w-full flex-1 max-w-3xl">
-                <div className="absolute bottom-full right-3 h-8 w-8 p-1 border border-base-300 rounded-full mb-5 cursor-pointer bg-base-100 z-10">
+                <div className="absolute bottom-full right-3 h-8 w-8 p-1 border border-gray-400 rounded-full mb-5 cursor-pointer bg-base-100 z-10">
                   <img src="/arrow-down.svg" onClick={handleScroll} />
                 </div>
                 <ChatInput onSubmit={sendMessage}/>

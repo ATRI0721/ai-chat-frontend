@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { Message, Conversation } from "../types";
 import { chatAPI } from "../api/chat";
+import { handleError } from "./errorStore";
 
 interface ChatState {
   // 对话相关
@@ -48,8 +49,8 @@ async function handleStream(stream: ReadableStream, handleMessage: (data: any) =
         try {
           const data = JSON.parse(line);
           handleMessage(data);
-        } catch (error) {
-          console.error("Failed to parse message", line, error);
+        } catch (e) {
+          handleError(new Error("Failed to parse message: " + line));
         }
       });
       return read();
@@ -81,7 +82,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
           conversations: response.map((c) => ({ ...c, isloading: false })),
         });
       })
-      .catch((e) => console.error(e));
+      .catch(handleError);
   },
 
   createConversation: async (message: string) => {
@@ -100,7 +101,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         localStorage.setItem("currentConversationId", response.id);
         await get().sendMessage(message);
       })
-      .catch((e) => console.error(e));
+      .catch(handleError);
   },
 
   getMessages: async (id: string) => {
@@ -108,7 +109,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     chatAPI.getMessages(id).then((response) => {
       set({ messages: response });
       get().messageCache.set(id, response);
-    }).catch((e) => console.error(e));
+    }).catch(handleError);
   },
 
   selectConversation: async (id) => {
@@ -249,9 +250,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
           isloading: false,
         }));
       
-    }).catch((error) => {
-      console.error(error);
-    });
+    }).catch(handleError);
   }
   ,
 
@@ -343,8 +342,6 @@ export const useChatStore = create<ChatState>((set, get) => ({
         }));
       
       })
-      .catch((error) => {
-        console.error(error);
-      });
+      .catch(handleError);
   },
 }));

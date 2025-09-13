@@ -1,5 +1,5 @@
 import { useAuthStore } from "../store/authStore";
-import functionalDialog from "./Chat/SettingDialog";
+import functionalDialog from "./Commend/SettingDialog";
 import { Dropdown } from "./Dropdown";
 
 export const Avatar = ({ fold }) => {
@@ -22,7 +22,7 @@ export const Avatar = ({ fold }) => {
       ]}
       top={true}
     >
-      <div className="flex items-center cursor-pointer hover:bg-gray-100 rounded-box p-2">
+      <div className="flex items-center cursor-pointer rounded-box p-2 hover:bg-[var(--hover-bg)]">
         <img src="/default_avatar.png" className="w-9 h-9"></img>
         <div>
           {fold || (

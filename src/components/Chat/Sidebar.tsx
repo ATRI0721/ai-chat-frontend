@@ -1,9 +1,19 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Avatar } from "../Avatar";
 import { classifyConversations } from "../../utils";
 import { SidebarConversaion } from "./SidebarConversaion";
 import { NewConversationButton } from "./NewConversationButton";
 import { useChatStore } from "../../store/chatStore";
+import { Conversation } from "../../types";
+
+type Props = {
+  onFold: () => void;
+  onSelectConversation: (id: string) => void;
+  onDeleteConversation: (id: string) => void;
+  onRenameConversation: (id: string, newTitle: string) => void;
+  conversations: Conversation[];
+  selectedconversationId: string;
+};
 
 
 const UnfoldSidebar = ({
@@ -13,14 +23,14 @@ const UnfoldSidebar = ({
   conversations,
   selectedconversationId,
   onFold,
-}) => {
+}: Props) => {
   return (
-    <div className="w-64 bg-base-100 border-r flex flex-col p-3">
+    <div className="w-64 bg-[#F9FBFF] flex flex-col p-3 dark:bg-base-200">
       {/* Logo 区域 */}
       <div className="mt-4 mb-2 ml-3 flex justify-between">
         <div className="text-2xl font-bold w-fit">AI Chat</div>
         <div
-          className="cursor-pointer w-fit flex items-center mr-4 tooltip tooltip-bottom hover-bg p-2"
+          className="cursor-pointer w-fit flex items-center tooltip tooltip-bottom hover-bg p-2"
           data-tip="收起侧边栏"
           onClick={onFold}
         >
@@ -36,7 +46,9 @@ const UnfoldSidebar = ({
       <div className="flex-1 overflow-y-auto px-2">
         {classifyConversations(conversations).map((convs) => (
           <div key={convs.date_before} className="mb-6 relative">
-            <div className="text-base font-bold sticky top-0 z-10 bg-base-100 py-3">{convs.group_name}</div>
+            <div className="text-base font-bold sticky top-0 z-10 py-3">
+              {convs.group_name}
+            </div>
             <ul className="mt-1">
               {convs.conversations.map((conv) => (
                 <SidebarConversaion
@@ -45,7 +57,9 @@ const UnfoldSidebar = ({
                   isSelected={conv.id === selectedconversationId}
                   onSelectConversation={() => onSelectConversation(conv.id)}
                   onDeleteConversation={() => onDeleteConversation(conv.id)}
-                  onRenameConversation={(title: string) => onRenameConversation(conv.id, title)}
+                  onRenameConversation={(title: string) =>
+                    onRenameConversation(conv.id, title)
+                  }
                 />
               ))}
             </ul>
@@ -60,13 +74,13 @@ const UnfoldSidebar = ({
 
 const FoldSidebar = ({
   onUnfold,
-}) => {
+}:{onUnfold: () => void}) => {
   return (
-    <div className="w-16 bg-base-100 border-r flex flex-col items-center p-1 pt-6 pb-6">
+    <div className="w-16 bg-[#F9FBFF] flex flex-col items-center p-1 py-2 dark:bg-base-200">
       <div>
         <img
           src="logo.svg"
-          className="w-12 h-12 cursor-pointer"
+          className="w-12 h-12 cursor-pointer mt-2"
           onClick={onUnfold}
           draggable="false"
         ></img>
@@ -94,7 +108,7 @@ const FoldSidebar = ({
         ></img>
       </div>
       <div className="flex-1"></div>
-      <div className="pt-2 border-t">
+      <div className="pt-2">
         <Avatar fold={true} />
       </div>
     </div>
@@ -103,13 +117,12 @@ const FoldSidebar = ({
 
 export const Sidebar = () => {
   const [fold, setFold] = useState(false);
-  const {
-    selectConversation,
-    deleteConversation,
-    reNameConversation,
-    currentConversationId,
-    conversations,
-  } = useChatStore();
+
+  const selectConversation = useChatStore((state) => state.selectConversation);
+  const deleteConversation = useChatStore((state) => state.deleteConversation);
+  const reNameConversation = useChatStore((state) => state.reNameConversation);
+  const currentConversationId = useChatStore((state) => state.currentConversationId);
+  const conversations = useChatStore((state) => state.conversations);
 
   return (
     <>

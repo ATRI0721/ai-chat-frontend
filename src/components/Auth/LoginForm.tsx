@@ -10,7 +10,7 @@ export const LoginForm = ({ onSwitch }: { onSwitch: () => void }) => {
   const [password, setPassword] = useState("");
   const [code, setCode] = useState("");
   const [loginType, setLoginType] = useState<LoginType>("password");
-  const { login } = useAuthStore();
+  const login = useAuthStore(s => s.login);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,28 +21,27 @@ export const LoginForm = ({ onSwitch }: { onSwitch: () => void }) => {
     await login(credentials);
   };
 
+  const loginButtonClasses = (currentType: string, type: string) =>
+    `flex-1 py-2 rounded-md ${
+      currentType === type
+        ? "bg-blue-600 text-white"
+        : "bg-gray-100 text-gray-600 hover:cursor-pointer hover:bg-gray-200"
+    }`;
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="flex gap-2 mb-4">
         <button
           type="button"
           onClick={() => setLoginType("password")}
-          className={`flex-1 py-2 rounded-md ${
-            loginType === "password"
-              ? "bg-blue-600 text-white"
-              : "bg-gray-100 text-gray-600"
-          }`}
+          className={loginButtonClasses(loginType, "password")}
         >
           密码登录
         </button>
         <button
           type="button"
           onClick={() => setLoginType("code")}
-          className={`flex-1 py-2 rounded-md ${
-            loginType === "code"
-              ? "bg-blue-600 text-white"
-              : "bg-gray-100 text-gray-600"
-          }`}
+          className={loginButtonClasses(loginType, "code")}
         >
           验证码登录
         </button>
@@ -86,7 +85,7 @@ export const LoginForm = ({ onSwitch }: { onSwitch: () => void }) => {
 
       <button
         type="submit"
-        className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+        className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 hover:cursor-pointer"
       >
         登录
       </button>
@@ -96,7 +95,7 @@ export const LoginForm = ({ onSwitch }: { onSwitch: () => void }) => {
         <button
           type="button"
           onClick={onSwitch}
-          className="text-blue-600 hover:underline"
+          className="text-blue-600 hover:underline hover:cursor-pointer"
         >
           立即注册
         </button>

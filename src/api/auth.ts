@@ -2,8 +2,6 @@ import { AuthResponse, LoginCodeRequest,LoginPasswordRequest, RegisterRequest, R
 import api from "./setting";
 
 
-
-
 export const authAPI = {
   async sendVerification(email: string, type: VerificationType) {
     return api.post(`/auth/send-verification/${type}`, { email }, false);

@@ -7,7 +7,7 @@ import { Navigate } from "react-router-dom";
 
 export const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
-  const { error, isLoading, user } = useAuthStore();
+  const { isLoading, user } = useAuthStore();
 
   if (user) return <Navigate to="/" />;
 
@@ -17,12 +17,6 @@ export const AuthPage = () => {
         <h1 className="text-2xl font-bold text-center mb-6 text-base-content/80">
           {isLogin ? "登录" : "注册"}
         </h1>
-
-        {error && (
-          <div className="mb-4 p-2 bg-red-100 text-red-700 rounded-md">
-            {error}
-          </div>
-        )}
 
         {isLogin ? (
           <LoginForm onSwitch={() => setIsLogin(false)} />

@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useAuthStore } from "../../store/authStore";
 import { VerificationRequest } from "../../types";
+import { handleError } from "../../store/errorStore";
 
 export const SendCodeButton = ({ email, type }: VerificationRequest) => {
-  const [countdown, setCountdown] = useState(0);
-  const { sendVerification } = useAuthStore();
+  const [countdown, setCountdown] = useState(parseInt(localStorage.getItem("countdown") || "0"));
+  const sendVerification = useAuthStore(s => s.sendVerification);
 
   const handleSendCode = async () => {
     if (!email || countdown > 0) return;
@@ -12,12 +13,21 @@ export const SendCodeButton = ({ email, type }: VerificationRequest) => {
     try {
       await sendVerification({email, type});
       setCountdown(60);
+      localStorage.setItem("countdown", "60");
       const timer = setInterval(() => {
-        setCountdown((prev) => (prev > 0 ? prev - 1 : 0));
+        setCountdown(prev => {
+          if (prev === 0) {
+            clearInterval(timer);
+            localStorage.removeItem("countdown");
+            return 0;
+          }
+          localStorage.setItem("countdown", (prev - 1).toString());
+          return prev - 1;
+        });
       }, 1000);
       setTimeout(() => clearInterval(timer), 60000);
     } catch (error) {
-      console.error("发送验证码失败:", error);
+      handleError(error, "验证码发送失败，请稍后重试");
     }
   };
 
