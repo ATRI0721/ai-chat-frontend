@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { SendCodeButton } from "./SendCodeButton";
 import { useAuthStore } from "../../store/authStore";
-import { LoginCodeRequest, LoginPasswordRequest, VerificationType } from "../../types";
+import { LoginCodeRequest, LoginPasswordRequest} from "../../types";
 
 type LoginType = "code" | "password";
 
@@ -79,7 +79,7 @@ export const LoginForm = ({ onSwitch }: { onSwitch: () => void }) => {
             className="flex-1 p-2 border rounded-md"
             required
           />
-          <SendCodeButton email={email} type={VerificationType.Login} />
+          <SendCodeButton email={email} type={"login"} />
         </div>
       )}
 

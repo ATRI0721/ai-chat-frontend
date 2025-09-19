@@ -1,4 +1,5 @@
-const BaseURL = "http://localhost:8000/api/v1";
+const BaseURL = import.meta.env.VITE_API_URL as string || "/api/v1";
+// const BaseURL = "http://localhost:8000/api/v1";
 
 const api = {
   baseURL: BaseURL,
@@ -42,6 +43,16 @@ const api = {
   },
   delete: async <T>(url: string, withToken = true): Promise<T> => {
     return api.fetch<T>(url, { method: "DELETE" }, withToken);
+  },
+  stream: async (url: string, options: RequestInit, withToken = true): Promise<Response> => {
+    const _options = {
+      ...options,
+      headers: {
+        ...api.headers,
+        Authorization: withToken? `Bearer ${api.getToken()}`: "",
+      },
+    };
+    return fetch(`${api.baseURL}${url}`, _options);
   },
 };
 

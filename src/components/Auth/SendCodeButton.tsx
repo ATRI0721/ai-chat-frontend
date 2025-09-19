@@ -1,31 +1,67 @@
-import { useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useAuthStore } from "../../store/authStore";
-import { VerificationRequest } from "../../types";
+import { SendVerificationRequest } from "../../types";
 import { handleError } from "../../store/errorStore";
 
-export const SendCodeButton = ({ email, type }: VerificationRequest) => {
-  const [countdown, setCountdown] = useState(parseInt(localStorage.getItem("countdown") || "0"));
-  const sendVerification = useAuthStore(s => s.sendVerification);
+// 倒计时 hook（浏览器环境）
+function useCountdown(key: string, initial = 0) {
+  const [countdown, setCountdown] = useState<number>(() => {
+    const saved = localStorage.getItem(key);
+    const deadline = saved ? parseInt(saved, 10) : 0;
+    if (!deadline) return initial;
+
+    const now = Date.now();
+    const remaining = Math.max(Math.floor((deadline - now) / 1000), 0);
+    return remaining;
+  });
+
+  const timerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (countdown > 0 && timerRef.current === null) {
+      timerRef.current = window.setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            if (timerRef.current !== null) {
+              clearInterval(timerRef.current);
+              timerRef.current = null;
+            }
+            localStorage.removeItem(key);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+
+    return () => {
+      if (timerRef.current !== null) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, [countdown, key]);
+
+  // 设置新的倒计时时，直接存 timestamp
+  const startCountdown = (seconds: number) => {
+    const deadline = Date.now() + seconds * 1000;
+    localStorage.setItem(key, deadline.toString());
+    setCountdown(seconds);
+  };
+
+  return [countdown, startCountdown] as const;
+}
+
+export const SendCodeButton = ({ email, type }: SendVerificationRequest) => {
+  const [countdown, setCountdown] = useCountdown("countdown");
+  const sendVerification = useAuthStore((s) => s.sendVerification);
 
   const handleSendCode = async () => {
     if (!email || countdown > 0) return;
 
     try {
-      await sendVerification({email, type});
+      await sendVerification({ email, type });
       setCountdown(60);
-      localStorage.setItem("countdown", "60");
-      const timer = setInterval(() => {
-        setCountdown(prev => {
-          if (prev === 0) {
-            clearInterval(timer);
-            localStorage.removeItem("countdown");
-            return 0;
-          }
-          localStorage.setItem("countdown", (prev - 1).toString());
-          return prev - 1;
-        });
-      }, 1000);
-      setTimeout(() => clearInterval(timer), 60000);
     } catch (error) {
       handleError(error, "验证码发送失败，请稍后重试");
     }

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { SendCodeButton } from "./SendCodeButton";
 import { useAuthStore } from "../../store/authStore";
-import { VerificationType } from "../../types";
 
 
 export const RegisterForm = ({ onSwitch }: { onSwitch: () => void }) => {
@@ -37,7 +36,7 @@ export const RegisterForm = ({ onSwitch }: { onSwitch: () => void }) => {
           className="flex-1 p-2 border rounded-md"
           required
         />
-        <SendCodeButton email={email} type={VerificationType.Register} />
+        <SendCodeButton email={email} type={"register"} />
       </div>
 
       <div>

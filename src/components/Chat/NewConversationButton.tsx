@@ -1,11 +1,11 @@
-import { useChatStore } from "../../store/chatStore";
+import { useConversationStore } from "../../store/conversationStore";
 
 export const NewConversationButton = ({
   size,
 }: {
   size: "small" | "large";
 }) => {
-  const selectConversation = useChatStore((state) => state.selectConversation);
+  const selectConversation = useConversationStore((state) => state.selectConversation);
   const baseClasses =
     "bg-[var(--button-bg)] rounded-xl hover:bg-[#C6DCF8] cursor-pointer flex items-center justify-evenly text-[#4D6BFE] dark:text-[#DBEAFE] dark:hover:bg-[#3D5AFE]";
   const sizeClasses =

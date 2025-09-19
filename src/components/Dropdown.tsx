@@ -1,5 +1,4 @@
-import { log } from "console";
-import { useState, useRef, useEffect, useLayoutEffect } from "react";
+import { useState, useRef,  useLayoutEffect } from "react";
 import ReactDOM from "react-dom";
 
 export const Dropdown = ({ children, menuitems, top = false }:{children: React.ReactElement, menuitems: React.ReactNode[], top?: boolean}) => {

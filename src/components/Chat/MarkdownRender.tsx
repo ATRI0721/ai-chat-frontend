@@ -1,10 +1,10 @@
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism";
-import { useState } from "react";
+import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-const CodeBlock = ({ className, children }) => {
+const CodeBlock = ({ className, children }: { className: string; children: React.ReactNode }) => {
   const [copied, setCopied] = useState(false);
   const language = className?.replace(/language-/, "") || "text";
   const code = String(children).trim();
@@ -41,13 +41,13 @@ const CodeBlock = ({ className, children }) => {
   );
 };
 
-const InlineCode = ({ children }) => (
+const InlineCode = ({ children }: { children: React.ReactNode }) => (
   <code className="bg-base-200 px-1.5 py-0.5 rounded">
     {children}
   </code>
 );
 
-export const MarkdownRenderer = ({ content }) => {
+export const MarkdownRenderer = ({ content }: { content: string }) => {
   return (
     <ReactMarkdown
       remarkPlugins={[remarkGfm]}
@@ -55,7 +55,7 @@ export const MarkdownRenderer = ({ content }) => {
         code({ className, children, ...props }) {
           const isInline = !className; 
           return isInline ? (
-            <InlineCode {...props} style={{width:"100%"}}>{children}</InlineCode>
+            <InlineCode {...props}>{children}</InlineCode>
           ) : (
             <CodeBlock className={className} {...props}>
               {children}

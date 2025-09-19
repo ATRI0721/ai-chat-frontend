@@ -1,5 +1,5 @@
 import {create} from "zustand";
-import { LoginCodeRequest,LoginPasswordRequest, RegisterRequest, ResetPasswordRequest, User, VerificationRequest } from "../types";
+import { LoginCodeRequest,LoginPasswordRequest, RegisterRequest, ResetPasswordRequest, User, SendVerificationRequest} from "../types";
 import { authAPI } from "../api/auth";
 import { handleError } from "./errorStore";
 
@@ -11,7 +11,7 @@ interface AuthState {
   register: (credentials: RegisterRequest) => Promise<void>;
   resetPassword: (credentials: ResetPasswordRequest) => Promise<boolean>;
   logout: () => void;
-  sendVerification: (r: VerificationRequest) => Promise<void>;
+  sendVerification: (r: SendVerificationRequest) => Promise<void>;
   verifyToken: () => Promise<void>;
   deleteAccount: () => Promise<void>;
 }

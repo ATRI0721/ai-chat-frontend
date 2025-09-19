@@ -2,7 +2,7 @@ import { useAuthStore } from "../store/authStore";
 import functionalDialog from "./Commend/SettingDialog";
 import { Dropdown } from "./Dropdown";
 
-export const Avatar = ({ fold }) => {
+export const Avatar = ({ fold }: { fold: boolean }) => {
   const logout = useAuthStore(s => s.logout);
   return (
     <Dropdown

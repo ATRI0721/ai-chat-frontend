@@ -1,4 +1,5 @@
-import { ClassifiedConversations, Conversation } from "./types";
+import { handleError } from "./store/errorStore";
+import { ClassifiedConversations, Conversation, StreamInitResponse, StreamMessageResponse } from "./types";
 
 export function getError(error: unknown): Error {
   const t = ["detail", "message", "error", "data", "description"] as const;
@@ -22,7 +23,7 @@ export function classifyConversations(
 ): ClassifiedConversations[] {
   const sortedConversations = conversations.sort(
     (a, b) =>
-      b.update_time - a.update_time
+      new Date(b.update_time).getTime() - new Date(a.update_time).getTime()
   );
   const t: ClassifiedConversations[] = [
     {
@@ -48,7 +49,7 @@ export function classifyConversations(
   ];
   let i = 0;
   for (const conversation of sortedConversations) {
-    while (i < t.length && conversation.update_time < t[i].date_before) {
+    while (i < t.length && new Date(conversation.update_time).getTime() < t[i].date_before) {
       i++;
     }
     if (i === t.length) {
@@ -116,3 +117,89 @@ export function getTheme() {
   }
   return storedTheme;
 }
+
+
+
+// ------------------ Token 检查 ------------------
+export function checkToken() {
+  const token = localStorage.getItem("token");
+  return token && token.trim().length > 0;
+}
+
+// ------------------ 临时 ID ------------------
+export function getTempId() {
+  return crypto.randomUUID();
+}
+
+// ------------------ 流式处理 ------------------
+export async function handleStream(
+  stream: ReadableStream,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  handleChunk: (data) => void
+) {
+  const reader = stream.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  async function read(): Promise<void> {
+    const { value, done } = await reader.read();
+    if (done) return;
+
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split("\n\n\n");
+    buffer = lines.pop() || "";
+
+    for (const line of lines) {
+      try {
+        handleChunk(JSON.parse(line));
+      } catch {
+        handleError(new Error(`Failed to parse message: ${line}`));
+      }
+    }
+    return read();
+  }
+
+  await read();
+  if (buffer.trim()) {
+    handleChunk(JSON.parse(buffer));
+  }
+}
+
+export async function processStream(
+  stream: ReadableStream,
+  handlers: {
+    onMessage?: (data: StreamMessageResponse) => void;
+    onInit?: (data: StreamInitResponse) => void;
+  }
+) {
+  await handleStream(stream, (data) => {
+    if (data.type === "message" && handlers.onMessage) {
+      handlers.onMessage(data);
+    } else if (data.type === "init" && handlers.onInit) {
+      handlers.onInit(data);
+    }
+  });
+}
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+export function withTimeWindow<F extends (this: any, ...args: any[]) => any>(
+  fn: F,
+  windowMs: number
+): (...args: Parameters<F>) => Promise<Awaited<ReturnType<F>> | void> {
+  let lastExec = 0;
+
+  // 使用普通 function 并声明 this 的类型，保证调用时能正确传递 this
+  return async function (this: ThisParameterType<F>, ...args: Parameters<F>) {
+    const now = Date.now();
+    if (now - lastExec < windowMs) {
+      // 在窗口内直接返回 undefined（以 Promise.resolve(undefined) 的形式）
+      return;
+    }
+    lastExec = now;
+    // await 用于解包可能的 Promise 返回值，返回类型匹配 Promise<Awaited<ReturnType<F>>>
+    return (await fn.apply(this, args)) as Awaited<ReturnType<F>>;
+  };
+}
+

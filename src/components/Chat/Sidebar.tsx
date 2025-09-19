@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Avatar } from "../Avatar";
 import { classifyConversations } from "../../utils";
-import { SidebarConversaion } from "./SidebarConversaion";
+import { SidebarConversation } from "./SidebarConversation";
 import { NewConversationButton } from "./NewConversationButton";
-import { useChatStore } from "../../store/chatStore";
+// import { useChatStore } from "../../store/chatStore";
 import { Conversation } from "../../types";
+import { useConversationStore } from "../../store/conversationStore";
 
 type Props = {
   onFold: () => void;
@@ -51,7 +52,7 @@ const UnfoldSidebar = ({
             </div>
             <ul className="mt-1">
               {convs.conversations.map((conv) => (
-                <SidebarConversaion
+                <SidebarConversation
                   key={conv.id}
                   title={conv.title}
                   isSelected={conv.id === selectedconversationId}
@@ -118,11 +119,11 @@ const FoldSidebar = ({
 export const Sidebar = () => {
   const [fold, setFold] = useState(false);
 
-  const selectConversation = useChatStore((state) => state.selectConversation);
-  const deleteConversation = useChatStore((state) => state.deleteConversation);
-  const reNameConversation = useChatStore((state) => state.reNameConversation);
-  const currentConversationId = useChatStore((state) => state.currentConversationId);
-  const conversations = useChatStore((state) => state.conversations);
+  const selectConversation = useConversationStore((state) => state.selectConversation);
+  const deleteConversation = useConversationStore((state) => state.deleteConversation);
+  const reNameConversation = useConversationStore((state) => state.reNameConversation);
+  const conversations = useConversationStore((state) => state.conversations);
+  const currentConversationId = useConversationStore((state) => state.currentConversationId);
 
   return (
     <>

@@ -2,7 +2,7 @@ import { JSX, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { getTheme, setTheme } from "../../utils";
 import { useAuthStore } from "../../store/authStore";
-import { useChatStore } from "../../store/chatStore";
+import { useConversationStore } from "../../store/conversationStore";
 
 function SettingItem({ children, text, bt=true }: { children: JSX.Element, text: string, bt?: boolean }){
     return (
@@ -47,7 +47,7 @@ const GeneralSetting = () => {
 
 const AccountSetting = () => {
   const user = useAuthStore(s => s.user);
-  const deleteAllConversations = useChatStore(s => s.deleteAllConversations);
+  const deleteAllConversations = useConversationStore(s => s.deleteAllConversations);
   return (
     <div className="flex flex-col items-center w-full my-2">
       <SettingItem text="邮箱" bt={false}>

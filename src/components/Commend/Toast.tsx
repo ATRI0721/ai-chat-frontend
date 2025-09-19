@@ -12,7 +12,7 @@ const Icon = ({ type }: { type: ToastType }) => {
     case "ERROR":
       return <img src="./error.svg" className="w-5 h-5"></img>;
     case "MESSAGE":
-      return <i className="fas fa-info-circle text-blue-500"></i>;
+      return <img src="./info.svg" className="w-5 h-5"></img>;
     case "SUCCESS":
       return <img src="./check.svg" className="w-5 h-5"></img>;
     default:

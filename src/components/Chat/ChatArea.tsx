@@ -2,13 +2,18 @@ import { useEffect, useRef } from "react";
 import { ChatInput } from "./ChatInput";
 import { MessageList } from "./MessageList";
 import { NewConversationButton } from "./NewConversationButton";
-import { useChatStore } from "../../store/chatStore";
+import { useMessageStore } from "../../store/messageStore";
+import { useConversationStore } from "../../store/conversationStore";
 
 
 export const ChatArea = () => {
     const messageListRef = useRef<HTMLDivElement>(null);
 
-    const { messages, sendMessage, conversations, currentConversationId, isloading } = useChatStore();
+    const messages = useMessageStore((state) => state.messages);
+    const loading = useMessageStore((state) => state.loading);
+    const sendMessage = useMessageStore((state) => state.sendMessage);
+    const currentConversationId = useConversationStore((state) => state.currentConversationId);
+    const conversations = useConversationStore((state) => state.conversations);
     const conversation = conversations.find(c => c.id === currentConversationId);
   
     function handleScroll() {
@@ -41,8 +46,8 @@ export const ChatArea = () => {
         >
           <div className="flex flex-col h-full relative">
             <div className="max-w-3xl mx-auto w-full">
-              <MessageList messages={messages} isloading = {isloading} />
-              {isloading ||
+              <MessageList messages={messages} loading = {loading} />
+              {loading ||
               (<div className="flex items-center justify-center my-6">
                  <NewConversationButton size="small" />
               </div>)}
